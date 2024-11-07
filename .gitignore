@@ -22,12 +22,12 @@ logs/
 *.bak
 
 # Ignore application properties for different environments (untracked and configured securely)
-# application-local.yml
-# application-test.yml
-# application-prod.yml
+application-local.yml
+application-test.yml
+application-prod.yml
 # Uncomment to exclude
-# application.yml
-# application.properties
+application.yml
+application.properties
 
 #
 .DS_Store

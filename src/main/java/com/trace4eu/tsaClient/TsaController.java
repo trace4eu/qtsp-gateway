@@ -3,16 +3,9 @@ package com.trace4eu.tsaClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.io.FileInputStream;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStream;
@@ -35,8 +28,8 @@ public class TsaController {
         this.tsaVerifierService = tsaVerifierService;
     }
 
-    @GetMapping("/get-timestamp")
-    public ResponseEntity<Map<String, String>> getTimestamp(@RequestParam String data) {
+    @GetMapping("/timestamp")
+    public ResponseEntity<Map<String, String>> getTimestamp(@RequestBody String data) {
         try {
             // Generate SHA-256 hash of the input data
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

@@ -8,11 +8,11 @@
 		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>rest-service-complete</artifactId>
+	<groupId>com.trace4eu.tsaClient</groupId>
+	<artifactId>trace4eu-tsa-client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rest-service-complete</name>
-	<description>Demo project for Spring Boot</description>
+	<name>trace4eu-tsa-client</name>
+	<description>Trace4eu Rest TSA Client</description>
 	<properties>
 		<java.version>18</java.version>
 	</properties>
