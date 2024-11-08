@@ -16,9 +16,6 @@ import java.util.Map;
 @RestController
 public class TsaController {
 
-    // Replace with your TSA endpoint URL
-    private static final String TSA_URL = "https://freetsa.org/tsr";
-
     private final TsaVerifierService tsaVerifierService;
     private final TsaRequestGenerator tsaRequestGenerator;
 

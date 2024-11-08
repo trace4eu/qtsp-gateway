@@ -7,13 +7,11 @@ import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class TsaRequestGenerator {
