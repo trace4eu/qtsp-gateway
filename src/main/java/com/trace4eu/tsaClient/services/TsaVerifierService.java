@@ -1,5 +1,8 @@
-package com.trace4eu.tsaClient;
+package com.trace4eu.tsaClient.services;
 
+import com.trace4eu.tsaClient.config.TsaConfigProperties;
+import com.trace4eu.tsaClient.domain.TimestampISOformat;
+import com.trace4eu.tsaClient.dtos.TimestampVerificationResponse;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
@@ -17,7 +20,6 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorResult;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -35,7 +37,7 @@ public class TsaVerifierService {
         this.tsaConfigProperties = tsaConfigProperties;
     }
 
-    public boolean verifyTimeStampToken(
+    public TimestampVerificationResponse verifyTimeStampToken(
             String timeStampTokenBase64,
             String originalData
     ) throws Exception {
@@ -50,7 +52,7 @@ public class TsaVerifierService {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] originalDataHash = digest.digest(originalData.getBytes());
         if (!MessageDigest.isEqual(tokenInfo.getMessageImprintDigest(), originalDataHash)) {
-            return false;
+            return new TimestampVerificationResponse(false, null);
         }
 
         // Verify the certificate chain: TSA -> CA
@@ -61,7 +63,7 @@ public class TsaVerifierService {
         CMSSignedData cmsSignedData = new CMSSignedData(tokenBytes);
 
         // Get signer information
-        SignerInformation signerInfo = (SignerInformation) cmsSignedData.getSignerInfos().getSigners().iterator().next();
+        SignerInformation signerInfo = cmsSignedData.getSignerInfos().getSigners().iterator().next();
 
         // Build SignerInformationVerifier using TSA certificate
         SignerInformationVerifier verifier = new JcaSignerInfoVerifierBuilder(
@@ -69,7 +71,10 @@ public class TsaVerifierService {
                 .build(tsaCertificate);
 
         // Perform the verification
-        return signerInfo.verify(verifier);
+        Boolean isValid = signerInfo.verify(verifier);
+        TimestampISOformat timestamp = new TimestampISOformat(timeStampTokenBase64);
+        return new TimestampVerificationResponse(isValid, timestamp.toString());
+
     }
 
     private boolean verifyCertificateChain(X509Certificate tsaCertificate, X509Certificate caCertificate) throws Exception {
@@ -86,7 +91,7 @@ public class TsaVerifierService {
         // Validate the certificate path
         CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         try {
-            CertPathValidatorResult result = certPathValidator.validate(certPath, params);
+            certPathValidator.validate(certPath, params);
             return true;
         } catch (CertPathValidatorException e) {
             return false; // Chain is not trusted

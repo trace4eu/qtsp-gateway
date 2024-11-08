@@ -1,5 +1,6 @@
 package com.trace4eu.tsaClient;
 
+import com.trace4eu.tsaClient.config.TsaConfigProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

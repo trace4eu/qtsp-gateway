@@ -1,10 +1,9 @@
-package com.trace4eu.tsaClient;
+package com.trace4eu.tsaClient.dtos;
 
-public class TimestampRequest {
+public class TimestampDataRequest {
     private String originalData;
     private String timestampToken;
 
-    // Getters and Setters
     public String getOriginalData() {
         return originalData;
     }
