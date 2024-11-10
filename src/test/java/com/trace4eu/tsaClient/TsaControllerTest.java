@@ -41,7 +41,7 @@ public class TsaControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.post("/timestamp")
 						.content("{\"data\": \"" + testData + "\"}")
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+				.andExpect(status().is(201))
 				.andExpect(jsonPath("$.timestamp").value(timestamp))
 				.andExpect(jsonPath("$.timestampToken").value(timestampToken));
 	}
@@ -89,6 +89,8 @@ public class TsaControllerTest {
 						.content("{\"timestampToken\": \"" + testToken + "\", \"originalData\": \"" + testData + "\"}")
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.error").value("request contains bad values"));
+				.andExpect(jsonPath("$.status").value(400))
+				.andExpect(jsonPath("$.message").exists())
+				.andExpect(jsonPath("$.timestamp").exists());
 	}
 }
