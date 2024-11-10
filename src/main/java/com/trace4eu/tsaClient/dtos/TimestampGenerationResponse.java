@@ -1,10 +1,10 @@
 package com.trace4eu.tsaClient.dtos;
 
-public class TimestampDataResponse {
+public class TimestampGenerationResponse {
     private String timestampToken;
     private String timestamp;
 
-    public TimestampDataResponse(String timestamp, String timestampToken) {
+    public TimestampGenerationResponse(String timestamp, String timestampToken) {
         this.timestamp = timestamp;
         this.timestampToken = timestampToken;
     }

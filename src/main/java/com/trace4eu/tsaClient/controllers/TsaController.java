@@ -1,33 +1,35 @@
 package com.trace4eu.tsaClient.controllers;
 
-import com.trace4eu.tsaClient.dtos.TimestampDataRequest;
-import com.trace4eu.tsaClient.dtos.TimestampDataResponse;
+import com.trace4eu.tsaClient.dtos.TimestampGenerationRequest;
+import com.trace4eu.tsaClient.dtos.TimestampVerificationRequest;
+import com.trace4eu.tsaClient.dtos.TimestampGenerationResponse;
 import com.trace4eu.tsaClient.dtos.TimestampVerificationResponse;
-import com.trace4eu.tsaClient.services.TsaRequestGenerator;
+import com.trace4eu.tsaClient.services.TsaRequestGeneratorService;
 import com.trace4eu.tsaClient.services.TsaVerifierService;
+import org.bouncycastle.cms.CMSException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
 public class TsaController {
 
     private final TsaVerifierService tsaVerifierService;
-    private final TsaRequestGenerator tsaRequestGenerator;
+    private final TsaRequestGeneratorService tsaRequestGeneratorService;
 
-    public TsaController(TsaVerifierService tsaVerifierService, TsaRequestGenerator tsaRequestGenerator) {
+    public TsaController(TsaVerifierService tsaVerifierService, TsaRequestGeneratorService tsaRequestGeneratorService) {
         this.tsaVerifierService = tsaVerifierService;
-        this.tsaRequestGenerator = tsaRequestGenerator;
+        this.tsaRequestGeneratorService = tsaRequestGeneratorService;
     }
 
-    @GetMapping("/timestamp")
-    public ResponseEntity<Object> getTimestamp(@RequestBody String data) {
+    @PostMapping("/timestamp")
+    public ResponseEntity<Object> getTimestamp(@RequestBody TimestampGenerationRequest request) {
         try {
-            TimestampDataResponse timestampResponse = tsaRequestGenerator.requestTimestampToTsa(data);
+            TimestampGenerationResponse timestampResponse = tsaRequestGeneratorService.requestTimestampToTsa(request.getData());
             return ResponseEntity.ok(timestampResponse);
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +39,7 @@ public class TsaController {
 
     @PostMapping("/verify")
     public ResponseEntity<Object> verifyTimestampToken(
-            @RequestBody TimestampDataRequest request
+            @RequestBody TimestampVerificationRequest request
     ) {
         try {
             // Verify the timestamp token
@@ -49,6 +51,10 @@ public class TsaController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
+            if (e.getClass() == CMSException.class) {
+                return ResponseEntity.status(400).body(Map.of("error", "request contains bad values"));
+            }
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }

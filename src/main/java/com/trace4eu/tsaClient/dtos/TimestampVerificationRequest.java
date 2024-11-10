@@ -1,6 +1,6 @@
 package com.trace4eu.tsaClient.dtos;
 
-public class TimestampDataRequest {
+public class TimestampVerificationRequest {
     private String originalData;
     private String timestampToken;
 

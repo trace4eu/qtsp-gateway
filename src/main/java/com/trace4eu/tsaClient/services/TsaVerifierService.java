@@ -51,6 +51,7 @@ public class TsaVerifierService {
         // Hash original data and compare with token imprint
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] originalDataHash = digest.digest(originalData.getBytes());
+        byte[] var1 = tokenInfo.getMessageImprintDigest();
         if (!MessageDigest.isEqual(tokenInfo.getMessageImprintDigest(), originalDataHash)) {
             return new TimestampVerificationResponse(false, null);
         }
@@ -73,7 +74,7 @@ public class TsaVerifierService {
         // Perform the verification
         Boolean isValid = signerInfo.verify(verifier);
         TimestampISOformat timestamp = new TimestampISOformat(timeStampTokenBase64);
-        return new TimestampVerificationResponse(isValid, timestamp.toString());
+        return new TimestampVerificationResponse(isValid, timestamp.getValue());
 
     }
 

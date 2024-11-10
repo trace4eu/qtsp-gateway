@@ -2,7 +2,7 @@ package com.trace4eu.tsaClient.services;
 
 import com.trace4eu.tsaClient.config.TsaConfigProperties;
 import com.trace4eu.tsaClient.domain.TimestampISOformat;
-import com.trace4eu.tsaClient.dtos.TimestampDataResponse;
+import com.trace4eu.tsaClient.dtos.TimestampGenerationResponse;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ import java.net.URL;
 import java.security.MessageDigest;
 
 @Service
-public class TsaRequestGenerator {
+public class TsaRequestGeneratorService {
 
     private final TsaConfigProperties tsaConfigProperties;
 
-    public TsaRequestGenerator(TsaConfigProperties tsaConfigProperties) {
+    public TsaRequestGeneratorService(TsaConfigProperties tsaConfigProperties) {
         this.tsaConfigProperties = tsaConfigProperties;
     }
 
-    public TimestampDataResponse requestTimestampToTsa(String data) throws Exception {
+    public TimestampGenerationResponse requestTimestampToTsa(String data) throws Exception {
         // Generate SHA-256 hash of the input data
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(data.getBytes());
@@ -44,7 +44,7 @@ public class TsaRequestGenerator {
         TimeStampToken timeStampToken = timeStampResponse.getTimeStampToken();
         String timestampTokenBase64 = Base64.toBase64String(timeStampToken.getEncoded());
         TimestampISOformat timestamp = new TimestampISOformat(timestampTokenBase64);
-        return new TimestampDataResponse(timestamp.getValue(), timestampTokenBase64);
+        return new TimestampGenerationResponse(timestamp.getValue(), timestampTokenBase64);
     }
 
 
