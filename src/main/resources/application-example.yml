@@ -99,3 +99,9 @@ tsa:
 # Spring server configuration
 server:
   port: 8080
+
+trace4eu:
+  security:
+    introspect-endpoint: https://api-dev-admin-auth.trace4eu.eu/oauth2/introspect
+    required-scope: qtsp:timestamp
+    admin-token:

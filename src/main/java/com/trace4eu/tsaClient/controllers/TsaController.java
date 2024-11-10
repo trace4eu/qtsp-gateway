@@ -9,7 +9,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.Operation;
 
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bouncycastle.cms.CMSException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -29,7 +33,10 @@ public class TsaController {
     }
 
     @PostMapping("/timestamp")
-    @Operation(summary = "Generate a timestamp using a TSA")
+    @Operation(
+            summary = "Generate a timestamp using a TSA",
+            security = @SecurityRequirement(name = "bearerAuth", scopes = {"qtsp:timestamp"})
+    )
     @ApiResponse(
             responseCode = "201",
             description = "Timestamp correctly created",
@@ -40,8 +47,10 @@ public class TsaController {
             description = "Error during the process",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     )
-    public ResponseEntity<Object> getTimestamp(@RequestBody TimestampGenerationRequest request) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Object> getTimestamp(Authentication authentication, @RequestBody TimestampGenerationRequest request) {
         try {
+            System.out.println("client: " + authentication.getName());
             TimestampGenerationResponse timestampResponse = tsaRequestGeneratorService.requestTimestampToTsa(request.getData());
             return ResponseEntity.status(201).body(timestampResponse);
         } catch (Exception e) {
