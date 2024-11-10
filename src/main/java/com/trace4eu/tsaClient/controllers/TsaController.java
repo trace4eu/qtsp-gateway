@@ -1,18 +1,20 @@
 package com.trace4eu.tsaClient.controllers;
 
-import com.trace4eu.tsaClient.dtos.TimestampGenerationRequest;
-import com.trace4eu.tsaClient.dtos.TimestampVerificationRequest;
-import com.trace4eu.tsaClient.dtos.TimestampGenerationResponse;
-import com.trace4eu.tsaClient.dtos.TimestampVerificationResponse;
+import com.trace4eu.tsaClient.dtos.*;
 import com.trace4eu.tsaClient.services.TsaRequestGeneratorService;
 import com.trace4eu.tsaClient.services.TsaVerifierService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.Operation;
+
+
 import org.bouncycastle.cms.CMSException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -27,22 +29,43 @@ public class TsaController {
     }
 
     @PostMapping("/timestamp")
+    @Operation(summary = "Generate a timestamp using a TSA")
+    @ApiResponse(
+            responseCode = "201",
+            description = "Timestamp correctly created",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimestampGenerationResponse.class))
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Error during the process",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> getTimestamp(@RequestBody TimestampGenerationRequest request) {
         try {
             TimestampGenerationResponse timestampResponse = tsaRequestGeneratorService.requestTimestampToTsa(request.getData());
-            return ResponseEntity.ok(timestampResponse);
+            return ResponseEntity.status(201).body(timestampResponse);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(400).body(new ErrorResponse(400, e.getMessage()));
         }
     }
 
     @PostMapping("/verify")
+    @Operation(summary = "Verify a timestamp token")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Verified timestamp token",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimestampVerificationResponse.class))
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Error during the process",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> verifyTimestampToken(
             @RequestBody TimestampVerificationRequest request
     ) {
         try {
-            // Verify the timestamp token
             TimestampVerificationResponse timestampVerificationResponse = tsaVerifierService.verifyTimeStampToken(request.getTimestampToken(), request.getOriginalData());
             if (timestampVerificationResponse.getResult()) {
                 return ResponseEntity.ok(timestampVerificationResponse);
@@ -53,9 +76,9 @@ public class TsaController {
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getClass() == CMSException.class) {
-                return ResponseEntity.status(400).body(Map.of("error", "request contains bad values"));
+                return ResponseEntity.status(400).body(new ErrorResponse(400, "request contains bad values"));
             }
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(500).body(new ErrorResponse(500, e.getMessage()));
         }
     }
 }
