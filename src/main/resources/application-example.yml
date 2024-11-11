@@ -99,6 +99,14 @@ tsa:
 # Spring server configuration
 server:
   port: 8080
+  servlet:
+    context-path: /tsa-client
+
+logging:
+  level:
+    root: INFO
+    com:
+      trace4eu: INFO
 
 trace4eu:
   security:

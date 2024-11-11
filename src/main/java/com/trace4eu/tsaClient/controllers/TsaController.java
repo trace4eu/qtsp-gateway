@@ -11,9 +11,10 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bouncycastle.cms.CMSException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -23,6 +24,8 @@ import java.util.Map;
 
 @RestController
 public class TsaController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TsaController.class);
 
     private final TsaVerifierService tsaVerifierService;
     private final TsaRequestGeneratorService tsaRequestGeneratorService;
@@ -35,6 +38,7 @@ public class TsaController {
     @PostMapping("/timestamp")
     @Operation(
             summary = "Generate a timestamp using a TSA",
+            description = "This endpoint requires a Bearer token with 'qtsp:timestamp' scope",
             security = @SecurityRequirement(name = "bearerAuth", scopes = {"qtsp:timestamp"})
     )
     @ApiResponse(
@@ -50,11 +54,11 @@ public class TsaController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> getTimestamp(Authentication authentication, @RequestBody TimestampGenerationRequest request) {
         try {
-            System.out.println("client: " + authentication.getName());
+            logger.info("Timestamp request by client {}", authentication.getName());
             TimestampGenerationResponse timestampResponse = tsaRequestGeneratorService.requestTimestampToTsa(request.getData());
             return ResponseEntity.status(201).body(timestampResponse);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while performing action", e);
             return ResponseEntity.status(400).body(new ErrorResponse(400, e.getMessage()));
         }
     }
@@ -83,7 +87,7 @@ public class TsaController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while performing action", e);
             if (e.getClass() == CMSException.class) {
                 return ResponseEntity.status(400).body(new ErrorResponse(400, "request contains bad values"));
             }

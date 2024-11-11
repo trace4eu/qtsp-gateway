@@ -7,7 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 public class BearerTokenAuthenticationFilter extends OncePerRequestFilter {
     private final String introspectionEndpoint;
@@ -33,14 +33,14 @@ public class BearerTokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         String bearerToken = extractBearerToken(request);
         if (bearerToken != null) {
-            boolean isValid = validateToken(bearerToken);
-            if (isValid) {
+            TokenIntrospectionResponse tokenIntrospectionResponse = validateToken(bearerToken);
+            if (tokenIntrospectionResponse.isActive()) {
                 SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken("user", null, Collections.emptyList()));
+                        new UsernamePasswordAuthenticationToken(tokenIntrospectionResponse.getSub(), null, Collections.emptyList()));
             }
         }
         filterChain.doFilter(request, response);
@@ -54,7 +54,7 @@ public class BearerTokenAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private boolean validateToken(String bearerToken) {
+    private TokenIntrospectionResponse validateToken(String bearerToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBearerAuth(adminBearerToken);
@@ -65,12 +65,131 @@ public class BearerTokenAuthenticationFilter extends OncePerRequestFilter {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(introspectionEndpoint, request, Map.class);
-            Map responseHydra = response.getBody();
-            return Boolean.TRUE.equals(response.getBody().get("active"));
-        } catch (Exception e) {
-            return false;
-        }
+        return restTemplate.postForEntity(introspectionEndpoint, request, TokenIntrospectionResponse.class).getBody();
     }
+}
+
+class TokenIntrospectionResponse {
+    private boolean active;
+    @Nullable
+    private String scope;
+    @Nullable
+    private String client_id;
+    @Nullable
+    private String sub;
+    @Nullable
+    private String exp;
+    @Nullable
+    private String iat;
+    @Nullable
+    private String nbf;
+    @Nullable
+    private String[] aud;
+    @Nullable
+    private String iss;
+    @Nullable
+    private String token_type;
+    @Nullable
+    private String token_use;
+
+    @Nullable
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(@Nullable String scope) {
+        this.scope = scope;
+    }
+
+    @Nullable
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(@Nullable String client_id) {
+        this.client_id = client_id;
+    }
+
+    @Nullable
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(@Nullable String sub) {
+        this.sub = sub;
+    }
+
+    @Nullable
+    public String getExp() {
+        return exp;
+    }
+
+    public void setExp(@Nullable String exp) {
+        this.exp = exp;
+    }
+
+    @Nullable
+    public String getIat() {
+        return iat;
+    }
+
+    public void setIat(@Nullable String iat) {
+        this.iat = iat;
+    }
+
+    @Nullable
+    public String getNbf() {
+        return nbf;
+    }
+
+    public void setNbf(@Nullable String nbf) {
+        this.nbf = nbf;
+    }
+
+    @Nullable
+    public String[] getAud() {
+        return aud;
+    }
+
+    public void setAud(@Nullable String[] aud) {
+        this.aud = aud;
+    }
+
+    @Nullable
+    public String getIss() {
+        return iss;
+    }
+
+    public void setIss(@Nullable String iss) {
+        this.iss = iss;
+    }
+
+    @Nullable
+    public String getToken_type() {
+        return token_type;
+    }
+
+    public void setToken_type(@Nullable String token_type) {
+        this.token_type = token_type;
+    }
+
+    @Nullable
+    public String getToken_use() {
+        return token_use;
+    }
+
+    public void setToken_use(@Nullable String token_use) {
+        this.token_use = token_use;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+
+
 }
