@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.util.encoders.DecoderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,7 +89,7 @@ public class TsaController {
 
         } catch (Exception e) {
             logger.error("An error occurred while performing action", e);
-            if (e.getClass() == CMSException.class) {
+            if (e.getClass() == CMSException.class || e.getClass() == DecoderException.class) {
                 return ResponseEntity.status(400).body(new ErrorResponse(400, "request contains bad values"));
             }
             return ResponseEntity.status(500).body(new ErrorResponse(500, e.getMessage()));
