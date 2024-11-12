@@ -7,6 +7,33 @@ It provides two methods:
 
 Swagger file can be accessed [here](https://api-dev.trace4eu.eu/trace4eu/tsa-client/swagger-ui/index.html)
 
+### How to get an access token
+
+The endpoint for generating a timestamp is protected by an access token.
+
+The following library has been developed: https://www.npmjs.com/package/@trace4eu/authorisation-wrapper  
+With that library you can get an access token:
+```
+const did = 'did:ebsi:zfEmvX5twhXjQJiCWsukvQA';
+const entityKeys = [
+  {
+    alg: Algorithm.ES256,
+    privateKeyHex:
+      '<ecc private key>',
+  },
+];
+const wallet = WalletFactory.createInstance(false, did, entityKeys);
+const trace4euAuthorisationApi = new Trace4euAuthorisationApi(wallet);
+const tokenResponse = await trace4euAuthorisationApi.getAccessToken('ES256', 'qtsp:timestamp');
+```
+
+The scopes related to the OCS are:
+- `qtsp:timestamp`: It allows to create a timestamp
+
+Before using the OCS, you need to request access to the T2.2 contributors. They will create the client in the Trace4eu authorisation server, following the script located [here](https://github.com/trace4eu/authorization-and-authentication/blob/main/examples/scenario1/admin.py)  
+If you want to make the calls to the Authorization server by your own, you can take this [python script](https://github.com/trace4eu/authorization-and-authentication/blob/main/examples/scenario1/client.py) as an example.
+
+
 ## CONFIGURATION PARAMETERS
 This an example (with dev values) of the `application.yml` file:
 
