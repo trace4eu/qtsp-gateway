@@ -154,3 +154,10 @@ For example:
 ```sh
 docker run -d -v /data/trace4eu/tsa-client/config/application.yml:/app/config/application.yml -p 8080:8080 --name trace4eu-tsa-client trace4eu-tsa-client:0.4.9
 ```
+Once the container is up and running you can access to the documentation:
+
+http://localhost:8080/trace4eu/tsa-client/swagger-ui/index.html
+
+Or download the openapi specification:
+
+http://localhost:8080/trace4eu/tsa-client/v3/api-docs
