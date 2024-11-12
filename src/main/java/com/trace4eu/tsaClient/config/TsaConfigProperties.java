@@ -36,5 +36,15 @@ public class TsaConfigProperties {
     public void setCaCert(String caCert) {
         this.caCert = caCert;
     }
+
+    private String authentication;
+
+    public String getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
+    }
 }
 

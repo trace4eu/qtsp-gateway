@@ -7,7 +7,9 @@ import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -55,10 +57,29 @@ public class TsaRequestGeneratorService {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/timestamp-query");
         connection.setRequestProperty("Content-Length", Integer.toString(requestBytes.length));
+
+        if (tsaConfigProperties.getAuthentication() != null) {
+            connection.setRequestProperty("Authorization", "Basic " + tsaConfigProperties.getAuthentication());
+        }
+
         connection.getOutputStream().write(requestBytes);
 
         try (InputStream responseStream = connection.getInputStream()) {
             return responseStream.readAllBytes();
+        } catch (Exception e) {
+            int responseCode = connection.getResponseCode();
+            InputStream responseErrorStream = connection.getErrorStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(responseErrorStream));
+            String line;
+            StringBuilder response = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            System.out.println("Response: " + response.toString());
+            throw e;
         }
     }
 }
