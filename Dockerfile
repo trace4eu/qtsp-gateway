@@ -15,4 +15,4 @@ WORKDIR /app
 COPY --from=build /app/app.jar app.jar
 RUN chown -R appuser:appgroup /app
 USER appuser
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=classpath:/,file:config/application.yml"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:config/application.yml"]

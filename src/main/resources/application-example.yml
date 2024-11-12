@@ -1,4 +1,3 @@
-# Custom TSA Configuration
 tsa:
   config:
     endpoint: https://freetsa.org/tsr
@@ -95,8 +94,6 @@ tsa:
       I2MLdq2qjZFDOCXsxBxJpbmLGBx9ow6ZerlUxzws2AWv2pk=
       -----END CERTIFICATE-----
 
-
-# Spring server configuration
 server:
   port: 8080
   servlet:
@@ -110,6 +107,9 @@ logging:
 
 trace4eu:
   security:
-    introspect-endpoint: https://api-dev-admin-auth.trace4eu.eu/oauth2/introspect
+    introspect-endpoint: https://api-dev-admin-auth.trace4eu.eu/admin/oauth2/introspect
     required-scope: qtsp:timestamp
-    admin-token:
+    admin-token: eyJhbGciOiJFUzI1NiIsImtpZCI6IiNrZXkxIiwidHlwIjoiand0In0.eyJhdWQiOiJhdXRob3JpemF0aW9uLWFuZC1hdXRoZW50aWNhdGlvbi1jb21wb25lbnQiLCJpc3MiOiJhdXRob3JpemF0aW9uLWFuZC1hdXRoZW50aWNhdGlvbi1jb21wb25lbnQiLCJzdWIiOiJ0ZXN0LXNjcmlwdCJ9.4UMJMqSh42eAmRPSgfe8IBo6XPODrEcfo0Kgo66EaJja_G8_qbhDR3cwky8ZP9TV7y0MQ3fCsX528dds8kgoqQ
+
+open-api:
+  server-url: "http://localhost:8080/trace4eu/tsa-client"

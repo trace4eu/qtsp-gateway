@@ -150,7 +150,9 @@ trace4eu:
     introspect-endpoint: https://api-dev-admin-auth.trace4eu.eu/admin/oauth2/introspect
     required-scope: qtsp:timestamp
     admin-token: 
-
+      
+open-api:
+  server-url: "http://localhost:8080/trace4eu/tsa-client"
 ```
 
 ## RUN APPLICATION
