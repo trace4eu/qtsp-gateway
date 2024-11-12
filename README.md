@@ -149,7 +149,7 @@ trace4eu:
   security:
     introspect-endpoint: https://api-dev-admin-auth.trace4eu.eu/admin/oauth2/introspect
     required-scope: qtsp:timestamp
-    admin-token: eyJhbGciOiJFUzI1NiIsImtpZCI6IiNrZXkxIiwidHlwIjoiand0In0.eyJhdWQiOiJhdXRob3JpemF0aW9uLWFuZC1hdXRoZW50aWNhdGlvbi1jb21wb25lbnQiLCJpc3MiOiJhdXRob3JpemF0aW9uLWFuZC1hdXRoZW50aWNhdGlvbi1jb21wb25lbnQiLCJzdWIiOiJ0ZXN0LXNjcmlwdCJ9.4UMJMqSh42eAmRPSgfe8IBo6XPODrEcfo0Kgo66EaJja_G8_qbhDR3cwky8ZP9TV7y0MQ3fCsX528dds8kgoqQ
+    admin-token: 
 
 ```
 
