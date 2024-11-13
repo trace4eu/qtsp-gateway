@@ -5,7 +5,9 @@ It provides two methods:
 - generate a timestamp token given a data
 - verify a timestamp token from the original data
 
-Swagger file can be accessed [here](https://api-dev.trace4eu.eu/trace4eu/tsa-client/swagger-ui/index.html)
+The application is already deployed in the Trace4eu dev environment.  
+Swagger file can be accessed: https://api-dev.trace4eu.eu/trace4eu/tsa-client/swagger-ui/index.html#/.  
+The openapi file descriptor is also available: https://api-dev.trace4eu.eu/trace4eu/tsa-client/v3/api-docs
 
 ### How to get an access token
 
