@@ -65,7 +65,11 @@ public class TsaController {
     }
 
     @PostMapping("/verify")
-    @Operation(summary = "Verify a timestamp token")
+    @Operation(
+            summary = "Verify a timestamp token",
+            description = "This endpoint requires a Bearer token with 'qtsp:timestamp' scope",
+            security = @SecurityRequirement(name = "bearerAuth", scopes = {"qtsp:timestamp"})
+    )
     @ApiResponse(
             responseCode = "200",
             description = "Verified timestamp token",
@@ -76,6 +80,7 @@ public class TsaController {
             description = "Error during the process",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     )
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> verifyTimestampToken(
             @RequestBody TimestampVerificationRequest request
     ) {
