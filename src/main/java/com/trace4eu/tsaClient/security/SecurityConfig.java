@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/timestamp").authenticated()
+                        .requestMatchers("/timestamp", "/verify").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(new BearerTokenAuthenticationFilter(
