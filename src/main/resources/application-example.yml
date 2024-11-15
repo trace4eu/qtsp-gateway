@@ -1,7 +1,7 @@
 tsa:
   config:
     endpoint: https://tsa.test4mind.com/tsa/user
-    authentication: cGFibG8uY29zaW9AdmFsaWRhdGVkaWQuY29tOjZyZ2MzcHRjMThzNzNwbzczMWZzN241NzZu
+    authentication:
 server:
   port: 8080
   servlet:
